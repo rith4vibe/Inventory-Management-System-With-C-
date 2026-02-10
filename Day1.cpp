@@ -1,40 +1,41 @@
-//OOP C++ Inventory Management System Project
-//Day 1:Base Classes - Product & Item
+//Day 1 Start with simple display with Item 
+//There are 2 classes Item and Product 
+//
 #include <iostream>
 using namespace std;
-//Base class (Encapsulation + Inheritance)
-class Product {
-    protected:
-    string productName;
-    string category;
-    public:
-    Product(string name="", string cat="")
-    : productName(name), category(cat) {}
-    void setProductName(string name) {
-        productName = name;
-    }
-    void setCategory(string cat) {
-        category = cat;
-    }
-    virtual void displayInfo() {
-        cout<<"Product Name: " <<productName<<endl;
-        cout<<"Category: "<<category<<endl;
-    }
-};
-//Derived class
-class Item : public Product {
-private:
-    int itemID;
+class Item
+{
+protected:
+    int id;
+    string name;
+
 public:
-    Item(int id=0, string name="", string cat="")
-    : Product(name, cat), itemID(id) {}
-    void displayInfo() override {
-        cout<<"Item ID: "<<itemID<<endl;
-        Product::displayInfo();
+    Item(int i = 0, string n = "") : name(n), id(i) {}
+    void setId(int i) { id = i; }
+    void setName(string n) { name = n; }
+    virtual void displayInfo()
+    {
+        cout << "ID: " << id << endl;
+        cout << "Name: " << name << endl;
     }
 };
-int main() {
-    Item i1(101,"Laptop","Electronics");
-    i1.displayInfo();
+class Product : public Item
+{
+    int quantity;
+    double price;
+
+public:
+    Product(int id = 0, string n = "", double p = 0.0, int q = 0) : Item(id, n), price(p), quantity(q) {}
+    void displayInfo() override
+    {
+        Item::displayInfo();
+        cout << "Price: " << price << endl;
+        cout << "Quantity: " << quantity << endl;
+    }
+};
+int main()
+{
+    Product p1(1, "Laptop", 999.99, 10);
+    p1.displayInfo();
     return 0;
 }
