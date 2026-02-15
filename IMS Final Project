@@ -26,15 +26,12 @@ public:
 /* ================= PRODUCT (DERIVED) ================= */
 class Product : public Item {
     int quantity;
+    string category;
     double price;
 
 public:
-    Product(int i, string n, double p, int q)
-        : Item(i, n), quantity(q), price(p) {}
-
-    int getQuantity() const { return quantity; }
-    double getPrice() const { return price; }
-
+    Product(int i, string n, double p, int q, string c)
+    : Item(i, n), quantity(q), price(p), category(c) {}
     double totalValue() const {
         return price * quantity;
     }
@@ -59,6 +56,7 @@ public:
         cout << "ID: " << id
              << " | Name: " << name
              << " | Price: $" << price
+             << " | Categoty: " << category
              << " | Qty: " << quantity
              << " | Value: $" << totalValue();
         if (isLowStock()) cout << " ⚠️ Low stock!";
@@ -70,6 +68,12 @@ public:
         return to_string(id) + "|" + name + "|" +
                to_string(price) + "|" + to_string(quantity);
     }
+    string toFileWithCategory() const {
+    return to_string(id) + "|" + name + "|" +
+           to_string(price) + "|" +
+           to_string(quantity) + "|" +
+           category;
+}
 };
 
 /* ================= INVENTORY ================= */
@@ -133,10 +137,10 @@ public:
         }
 
         string name = getString("Enter name: ");
+        string category = getString("Enter category: ");
         double price = getDouble("Enter price: ");
         int qty = getInt("Enter quantity: ");
-
-        products.push_back(make_unique<Product>(id, name, price, qty));
+        products.push_back(make_unique<Product>(id, name, price, qty, category));
         cout << "✅ Product added\n";
     }
 
@@ -233,7 +237,8 @@ public:
     void saveToFile() const {
         ofstream file(filename);
         for (const auto& p : products)
-            file << p->toFile() << '\n';
+            file << p->toFileWithCategory() << '\n';
+            
     }
 
     /* LOAD */
@@ -244,17 +249,18 @@ public:
         string line;
         while (getline(file, line)) {
             stringstream ss(line);
-            string id, name, price, qty;
+            string id, name, price, qty, category;
 
             getline(ss, id, '|');
             getline(ss, name, '|');
             getline(ss, price, '|');
             getline(ss, qty, '|');
+            getline(ss, category, '|');
 
             products.push_back(
                 make_unique<Product>(
-                    stoi(id), name, stod(price), stoi(qty)
-                )
+    stoi(id), name, stod(price), stoi(qty), category
+)
             );
         }
     }
