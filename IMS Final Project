@@ -182,6 +182,9 @@ public:
 
     /* SEARCH PRODUCT */
     void searchProduct() const {
+        if (products.empty()) {
+            cout << "\n--- Nothing found. Please add your product! ---\n";
+        }
         int id;
         cout << "Enter product ID: ";
         cin >> id;
