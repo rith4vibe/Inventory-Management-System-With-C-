@@ -56,7 +56,7 @@ public:
         cout << "ID: " << id
              << " | Name: " << name
              << " | Price: $" << price
-             << " | Categoty: " << category
+             << " | Category: " << category
              << " | Qty: " << quantity
              << " | Value: $" << totalValue();
         if (isLowStock()) cout << " ⚠️ Low stock!";
