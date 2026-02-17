@@ -39,7 +39,6 @@ public:
     void addStock(int amt) {
         if (amt > 0) quantity += amt;
     }
-
     bool removeStock(int amt) {
         if (amt > 0 && quantity >= amt) {
             quantity -= amt;
@@ -63,11 +62,6 @@ public:
         cout << '\n';
     }
 
-    /* Save format */
-    string toFile() const {
-        return to_string(id) + "|" + name + "|" +
-               to_string(price) + "|" + to_string(quantity);
-    }
     string toFileWithCategory() const {
     return to_string(id) + "|" + name + "|" +
            to_string(price) + "|" +
@@ -82,13 +76,13 @@ class Inventory {
     const string filename = "inventory.txt";
 
     int findIndex(int id) const {
-        for (int i = 0; i < products.size(); i++)
+        for (size_t i = 0; i < products.size(); i++)
             if (products[i]->getId() == id)
                 return i;
         return -1;
     }
 
-    int getInt(const string& msg) {
+    int getInt(const string& msg) const {
         int v;
         cout << msg;
         while (!(cin >> v)) {
@@ -172,9 +166,12 @@ public:
             cout << "❌ Product not found!\n";
             return;
         }
-        int amt = getInt("Enter amount: ");
-        products[i]->addStock(amt);
-        cout << "✅ Stock added\n";
+         int amt = getInt("Enter amount: ");
+         if (amt <= 0) {
+         cout << "Invalid amount\n";
+    return;
+}
+products[i]->addStock(amt);
     }
 
     /* REMOVE STOCK */
@@ -190,8 +187,13 @@ public:
             return;
         }
         int amt = getInt("Enter amount: ");
-        if (!products[i]->removeStock(amt))
+        if (amt <= 0) {
+            cout << "Invalid amount\n";
+           return;
+}
+if (!products[i]->removeStock(amt)){
             cout << "❌ Not enough stock\n";
+}
         else
             cout << "✅ Stock removed\n";
     }
@@ -202,10 +204,7 @@ public:
             cout << "\n--- Nothing found. Please add your product! ---\n";
              return;
         }
-        int id;
-        cout << "Enter product ID: ";
-        cin >> id;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        int id = getInt("Enter product ID: ");
 
         int i = findIndex(id);
         if (i == -1) {
@@ -234,12 +233,16 @@ public:
     }
 
     /* SAVE */
-    void saveToFile() const {
-        ofstream file(filename);
-        for (const auto& p : products)
-            file << p->toFileWithCategory() << '\n';
-            
+     void saveToFile() const {
+    ofstream file(filename);
+    if (!file) {
+        cout << "Error saving file\n";
+        return;
     }
+
+    for (const auto& p : products)
+        file << p->toFileWithCategory() << '\n';
+}
 
     /* LOAD */
     void loadFromFile() {
@@ -256,12 +259,15 @@ public:
             getline(ss, price, '|');
             getline(ss, qty, '|');
             getline(ss, category, '|');
-
-            products.push_back(
-                make_unique<Product>(
-    stoi(id), name, stod(price), stoi(qty), category
-)
-            );
+        try {
+    products.push_back(
+        make_unique<Product>(
+            stoi(id), name, stod(price), stoi(qty), category
+));
+}
+catch (...) {
+    cout << "Skipping invalid record\n";
+}
         }
     }
 };
