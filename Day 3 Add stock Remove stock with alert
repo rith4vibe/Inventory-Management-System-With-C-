@@ -1,0 +1,25 @@
+void addStock(int amt) {
+        if (amt > 0) quantity += amt;
+    }
+bool removeStock(int amt) {
+        if (amt > 0 && quantity >= amt) {
+            quantity -= amt;
+            return true;
+        }
+        return false;
+    }
+
+bool isLowStock(int limit = 5) const {
+        return quantity <= limit;
+    }
+
+void display() const override {
+        cout << "ID: " << id
+             << " | Name: " << name
+             << " | Price: $" << price
+             << " | Category: " << category
+             << " | Qty: " << quantity
+             << " | Value: $" << totalValue();
+        if (isLowStock()) cout << " ⚠️ Low stock!";
+        cout << '\n';
+    }
